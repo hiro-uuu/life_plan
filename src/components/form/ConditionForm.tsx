@@ -6,8 +6,9 @@ import { ExpenseTab } from './ExpenseTab';
 import { InvestmentTab } from './InvestmentTab';
 import { LoanTab } from './LoanTab';
 import { ChildrenTab } from './ChildrenTab';
+import { TaxTab } from './TaxTab';
 
-type TabKey = 'basic' | 'income' | 'expense' | 'investment' | 'loan' | 'children';
+type TabKey = 'basic' | 'income' | 'expense' | 'investment' | 'loan' | 'children' | 'tax';
 
 const TABS: readonly Tab<TabKey>[] = [
   { key: 'basic', label: '基本' },
@@ -16,6 +17,7 @@ const TABS: readonly Tab<TabKey>[] = [
   { key: 'investment', label: '投資' },
   { key: 'loan', label: '負債' },
   { key: 'children', label: '子ども' },
+  { key: 'tax', label: '税金' },
 ];
 
 export function ConditionForm() {
@@ -29,6 +31,7 @@ export function ConditionForm() {
       {active === 'investment' && <InvestmentTab />}
       {active === 'loan' && <LoanTab />}
       {active === 'children' && <ChildrenTab />}
+      {active === 'tax' && <TaxTab />}
     </div>
   );
 }

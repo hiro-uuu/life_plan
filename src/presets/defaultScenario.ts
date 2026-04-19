@@ -1,5 +1,6 @@
 import type { Scenario } from '@/types/scenario';
 import type { Child, EducationStage, SchoolType } from '@/types/child';
+import type { TaxConfig } from '@/types/tax';
 
 export function defaultEducationPlan(): Record<EducationStage, SchoolType> {
   return {
@@ -24,12 +25,40 @@ export function createDefaultChild(birthYear: number, name?: string): Child {
   };
 }
 
+export function createDefaultTaxConfig(startYear: number): TaxConfig {
+  return {
+    incomeInputMode: 'gross',
+    mortgageDeduction: {
+      enabled: false,
+      housingType: 'certified',
+      housingAgeType: 'new',
+      isChildRaisingHousehold: false,
+      moveInYear: startYear + 1,
+    },
+    propertyTax: {
+      enabled: false,
+      landAssessedValue: 10_000_000,
+      buildingAssessedValue: 8_000_000,
+      isSmallResidentialLand: true,
+      isNewConstruction: true,
+      isLongLifeHousing: false,
+      constructionYear: startYear + 1,
+    },
+    retirementBonus: {
+      enabled: false,
+      amount: 20_000_000,
+      retireYear: startYear + 36,
+      yearsOfService: 35,
+    },
+  };
+}
+
 /** 空のシナリオ雛形を生成する。要件の「29歳、1年後に子」を既定に織り込む */
 export function createDefaultScenario(): Scenario {
   const now = new Date();
   const startYear = now.getFullYear();
   return {
-    version: 1,
+    version: 2,
     id: cryptoRandomId(),
     name: '新規シナリオ',
     createdAt: now.toISOString(),
@@ -45,10 +74,12 @@ export function createDefaultScenario(): Scenario {
     income: {
       husband: {
         annualTakeHome: 6_000_000,
+        annualGross: 8_000_000,
         annualRaiseAmount: 100_000,
       },
       wife: {
         annualTakeHome: 3_000_000,
+        annualGross: 4_000_000,
         maternityLeaveYears: 1,
       },
     },
@@ -69,8 +100,19 @@ export function createDefaultScenario(): Scenario {
       annualContribution: 600_000,
       annualYieldPercent: 4,
     },
+    investmentAccounts: [
+      {
+        id: cryptoRandomId(),
+        name: 'つみたてNISA',
+        accountType: 'nisa',
+        initialBalance: 1_000_000,
+        annualContribution: 600_000,
+        annualYieldPercent: 4,
+      },
+    ],
     loans: [],
     children: [createDefaultChild(startYear + 1, '第1子')],
+    taxConfig: createDefaultTaxConfig(startYear),
   };
 }
 

@@ -6,18 +6,30 @@ import styles from './Form.module.css';
 export function IncomeTab() {
   const { scenario, dispatch } = useScenario();
   const { husband, wife } = scenario.income;
+  const isGrossMode = scenario.taxConfig?.incomeInputMode === 'gross';
 
   return (
     <div className={styles.sectionStack}>
-      <Section title="夫の収入（手取り）">
+      <Section title={isGrossMode ? '夫の収入（額面）' : '夫の収入（手取り）'}>
         <div className={styles.grid2}>
-          <NumberField
-            label="初年度の年収"
-            value={husband.annualTakeHome}
-            step={100_000}
-            suffix="円"
-            onChange={(v) => dispatch({ type: 'UPDATE_HUSBAND', patch: { annualTakeHome: v } })}
-          />
+          {isGrossMode ? (
+            <NumberField
+              label="初年度の額面年収"
+              value={husband.annualGross ?? 0}
+              step={100_000}
+              suffix="円"
+              onChange={(v) => dispatch({ type: 'UPDATE_HUSBAND', patch: { annualGross: v } })}
+              hint="税・社保を自動計算して手取りを算出"
+            />
+          ) : (
+            <NumberField
+              label="初年度の年収"
+              value={husband.annualTakeHome}
+              step={100_000}
+              suffix="円"
+              onChange={(v) => dispatch({ type: 'UPDATE_HUSBAND', patch: { annualTakeHome: v } })}
+            />
+          )}
           <NumberField
             label="年間昇給額"
             value={husband.annualRaiseAmount}
@@ -41,20 +53,33 @@ export function IncomeTab() {
           />
         </div>
         <p className={styles.note}>
-          ※ 要件通り、夫の給与にはインフレは適用されません（実質賃金の目減りを表現）。
+          {isGrossMode
+            ? '※ 額面モード: 社会保険料・所得税・住民税が自動計算されます。昇給は額面に対して適用されます。'
+            : '※ 要件通り、夫の給与にはインフレは適用されません（実質賃金の目減りを表現）。'}
         </p>
       </Section>
 
-      <Section title="妻の収入（手取り）">
+      <Section title={isGrossMode ? '妻の収入（額面）' : '妻の収入（手取り）'}>
         <div className={styles.grid2}>
-          <NumberField
-            label="年収"
-            value={wife.annualTakeHome}
-            step={100_000}
-            suffix="円"
-            onChange={(v) => dispatch({ type: 'UPDATE_WIFE', patch: { annualTakeHome: v } })}
-            hint="昇給なし（要件通り）"
-          />
+          {isGrossMode ? (
+            <NumberField
+              label="額面年収"
+              value={wife.annualGross ?? 0}
+              step={100_000}
+              suffix="円"
+              onChange={(v) => dispatch({ type: 'UPDATE_WIFE', patch: { annualGross: v } })}
+              hint="税・社保を自動計算して手取りを算出"
+            />
+          ) : (
+            <NumberField
+              label="年収"
+              value={wife.annualTakeHome}
+              step={100_000}
+              suffix="円"
+              onChange={(v) => dispatch({ type: 'UPDATE_WIFE', patch: { annualTakeHome: v } })}
+              hint="昇給なし（要件通り）"
+            />
+          )}
           <NumberField
             label="産休年数"
             value={wife.maternityLeaveYears}

@@ -7,6 +7,8 @@ interface Props {
 }
 
 export function ResultsTable({ rows }: Props) {
+  const hasGrossMode = rows.some((r) => r.taxBreakdown);
+
   return (
     <div className={[styles.wrap, 'scrollbar-thin'].join(' ')}>
       <table className={styles.table}>
@@ -15,6 +17,10 @@ export function ResultsTable({ rows }: Props) {
             <th className={styles.stickyCol}>年</th>
             <th>夫歳</th>
             <th>妻歳</th>
+            {hasGrossMode && <th>額面</th>}
+            {hasGrossMode && <th>社保</th>}
+            {hasGrossMode && <th>税金</th>}
+            {hasGrossMode && <th>控除</th>}
             <th className={styles.good}>収入</th>
             <th className={styles.bad}>支出</th>
             <th>収支</th>
@@ -27,6 +33,7 @@ export function ResultsTable({ rows }: Props) {
         <tbody>
           {rows.map((r) => {
             const diff = r.totalIncome - r.totalExpense;
+            const tb = r.taxBreakdown;
             return (
               <tr
                 key={r.year}
@@ -45,6 +52,22 @@ export function ResultsTable({ rows }: Props) {
                 <td className={styles.stickyCol}>{r.year}</td>
                 <td>{r.husbandAge}</td>
                 <td>{r.wifeAge}</td>
+                {hasGrossMode && (
+                  <td className={styles.num}>{tb ? manYen(tb.grossIncome) : '-'}</td>
+                )}
+                {hasGrossMode && (
+                  <td className={styles.num}>{tb ? manYen(tb.socialInsurance) : '-'}</td>
+                )}
+                {hasGrossMode && (
+                  <td className={styles.num}>
+                    {tb ? manYen(tb.incomeTax + tb.residentTax) : '-'}
+                  </td>
+                )}
+                {hasGrossMode && (
+                  <td className={styles.num}>
+                    {tb ? manYen(tb.mortgageDeduction + tb.childAllowance) : '-'}
+                  </td>
+                )}
                 <td className={styles.num}>{manYen(r.totalIncome)}</td>
                 <td className={styles.num}>{manYen(r.totalExpense)}</td>
                 <td className={[styles.num, diff < 0 ? styles.bad : styles.good].join(' ')}>

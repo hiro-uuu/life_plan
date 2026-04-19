@@ -71,6 +71,90 @@ function checkBoolean(v: unknown, path: string, errors: ValidationError[]): bool
 }
 
 /**
+ * taxConfig のバリデーション（v2 用）
+ */
+function validateTaxConfig(tc: unknown, errors: ValidationError[]): void {
+  if (!isRecord(tc)) {
+    err(errors, 'taxConfig', 'オブジェクトではありません');
+    return;
+  }
+
+  const validModes = ['takeHome', 'gross'];
+  if (!validModes.includes(tc.incomeInputMode as string)) {
+    err(errors, 'taxConfig.incomeInputMode', 'takeHome | gross');
+  }
+
+  // mortgageDeduction
+  const md = tc.mortgageDeduction;
+  if (isRecord(md)) {
+    checkBoolean(md.enabled, 'taxConfig.mortgageDeduction.enabled', errors);
+    const validHousingTypes = ['certified', 'zeh', 'energyEfficient', 'other'];
+    if (!validHousingTypes.includes(md.housingType as string)) {
+      err(errors, 'taxConfig.mortgageDeduction.housingType', 'certified | zeh | energyEfficient | other');
+    }
+    const validAgeTypes = ['new', 'used'];
+    if (!validAgeTypes.includes(md.housingAgeType as string)) {
+      err(errors, 'taxConfig.mortgageDeduction.housingAgeType', 'new | used');
+    }
+    checkBoolean(md.isChildRaisingHousehold, 'taxConfig.mortgageDeduction.isChildRaisingHousehold', errors);
+    checkNumber(md.moveInYear, 'taxConfig.mortgageDeduction.moveInYear', errors, { integer: true });
+  }
+
+  // propertyTax
+  const pt = tc.propertyTax;
+  if (isRecord(pt)) {
+    checkBoolean(pt.enabled, 'taxConfig.propertyTax.enabled', errors);
+    checkNumber(pt.landAssessedValue, 'taxConfig.propertyTax.landAssessedValue', errors, { min: 0 });
+    checkNumber(pt.buildingAssessedValue, 'taxConfig.propertyTax.buildingAssessedValue', errors, { min: 0 });
+    checkBoolean(pt.isSmallResidentialLand, 'taxConfig.propertyTax.isSmallResidentialLand', errors);
+    checkBoolean(pt.isNewConstruction, 'taxConfig.propertyTax.isNewConstruction', errors);
+    checkBoolean(pt.isLongLifeHousing, 'taxConfig.propertyTax.isLongLifeHousing', errors);
+    checkNumber(pt.constructionYear, 'taxConfig.propertyTax.constructionYear', errors, { integer: true });
+  }
+
+  // retirementBonus
+  const rb = tc.retirementBonus;
+  if (isRecord(rb)) {
+    checkBoolean(rb.enabled, 'taxConfig.retirementBonus.enabled', errors);
+    checkNumber(rb.amount, 'taxConfig.retirementBonus.amount', errors, { min: 0 });
+    checkNumber(rb.retireYear, 'taxConfig.retirementBonus.retireYear', errors, { integer: true });
+    checkNumber(rb.yearsOfService, 'taxConfig.retirementBonus.yearsOfService', errors, { min: 0, integer: true });
+  }
+}
+
+/**
+ * investmentAccounts のバリデーション（v2 用）
+ */
+function validateInvestmentAccounts(accts: unknown, errors: ValidationError[]): void {
+  if (!Array.isArray(accts)) {
+    err(errors, 'investmentAccounts', '配列ではありません');
+    return;
+  }
+  accts.forEach((a, idx) => {
+    const path = `investmentAccounts[${idx}]`;
+    if (!isRecord(a)) {
+      err(errors, path, 'オブジェクトではありません');
+      return;
+    }
+    checkString(a.id, `${path}.id`, errors);
+    checkString(a.name, `${path}.name`, errors);
+    const validTypes = ['nisa', 'taxable'];
+    if (!validTypes.includes(a.accountType as string)) {
+      err(errors, `${path}.accountType`, 'nisa | taxable');
+    }
+    checkNumber(a.initialBalance, `${path}.initialBalance`, errors, { min: 0 });
+    checkNumber(a.annualContribution, `${path}.annualContribution`, errors, { min: 0 });
+    checkNumber(a.annualYieldPercent, `${path}.annualYieldPercent`, errors, { min: -50, max: 50 });
+    if (a.contributionRaiseAmount !== undefined) {
+      checkNumber(a.contributionRaiseAmount, `${path}.contributionRaiseAmount`, errors);
+    }
+    if (a.stopContributionYear !== undefined) {
+      checkNumber(a.stopContributionYear, `${path}.stopContributionYear`, errors, { integer: true });
+    }
+  });
+}
+
+/**
  * Scenario の手書きバリデーション。失敗しても部分的な data を返すことはしない。
  * 未知のキーは警告にしない（無視）ため、拡張に寛容。
  */
@@ -82,8 +166,8 @@ export function validateScenario(input: unknown): ValidationResult {
   }
 
   // version
-  if (input.version !== 1) {
-    err(errors, 'version', 'version は 1 である必要があります');
+  if (input.version !== 1 && input.version !== 2) {
+    err(errors, 'version', 'version は 1 または 2 である必要があります');
   }
 
   checkString(input.id, 'id', errors);
@@ -137,6 +221,9 @@ export function validateScenario(input: unknown): ValidationResult {
       if (h.retireYear !== undefined) {
         checkNumber(h.retireYear, 'income.husband.retireYear', errors, { integer: true });
       }
+      if (h.annualGross !== undefined) {
+        checkNumber(h.annualGross, 'income.husband.annualGross', errors, { min: 0 });
+      }
     }
     const w = income.wife;
     if (!isRecord(w)) {
@@ -150,6 +237,9 @@ export function validateScenario(input: unknown): ValidationResult {
       });
       if (w.retireYear !== undefined) {
         checkNumber(w.retireYear, 'income.wife.retireYear', errors, { integer: true });
+      }
+      if (w.annualGross !== undefined) {
+        checkNumber(w.annualGross, 'income.wife.annualGross', errors, { min: 0 });
       }
     }
   }
@@ -192,6 +282,11 @@ export function validateScenario(input: unknown): ValidationResult {
         integer: true,
       });
     }
+  }
+
+  // investmentAccounts (optional, v2)
+  if (input.investmentAccounts !== undefined) {
+    validateInvestmentAccounts(input.investmentAccounts, errors);
   }
 
   // loans
@@ -265,6 +360,11 @@ export function validateScenario(input: unknown): ValidationResult {
       checkNumber(c.childMiscAnnual, `${path}.childMiscAnnual`, errors, { min: 0 });
       checkBoolean(c.applyInflationToChildCosts, `${path}.applyInflationToChildCosts`, errors);
     });
+  }
+
+  // taxConfig (optional, v2)
+  if (input.taxConfig !== undefined) {
+    validateTaxConfig(input.taxConfig, errors);
   }
 
   if (errors.length > 0) {
