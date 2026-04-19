@@ -38,7 +38,7 @@ function defaultTaxConfig(): TaxConfig {
  * - income に annualGross を追加（デフォルト 0）
  */
 function migrateV1ToV2(obj: Record<string, unknown>): Record<string, unknown> {
-  const migrated = { ...obj, version: 2 };
+  const migrated: Record<string, unknown> = { ...obj, version: 2 };
 
   // taxConfig がなければデフォルトを追加
   if (!migrated.taxConfig) {
