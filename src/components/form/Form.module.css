@@ -1,0 +1,110 @@
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.grid1 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.row > * {
+  flex: 1 1 140px;
+}
+
+.sectionStack > * + * {
+  margin-top: 12px;
+}
+
+.categoryRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.categoryRow:last-child {
+  border-bottom: none;
+}
+
+.categoryName {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.categoryInput {
+  width: 130px;
+}
+
+.inflationToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.inflationToggle input {
+  accent-color: var(--accent);
+}
+
+.childCard {
+  background: var(--panel-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+}
+
+.childCard + .childCard {
+  margin-top: 12px;
+}
+
+.childHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.childName {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.eduGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.eduStage {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.eduStage select {
+  width: 100%;
+}
+
+.note {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 6px;
+}

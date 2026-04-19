@@ -1,0 +1,59 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 600px;
+}
+
+.main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(320px, 30%) minmax(320px, 35%) minmax(320px, 35%);
+  gap: 10px;
+  padding: 10px;
+  overflow: hidden;
+}
+
+.pane {
+  overflow: auto;
+  min-height: 0;
+}
+
+.left > * + *,
+.right > * + * {
+  margin-top: 10px;
+}
+
+.left {
+  padding-right: 4px;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+}
+
+.center > * {
+  flex: 1;
+  min-height: 0;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (max-width: 1280px) {
+  .main {
+    grid-template-columns: 1fr;
+    overflow: auto;
+  }
+  .pane {
+    max-height: none;
+  }
+  .center > * {
+    flex: none;
+    height: 500px;
+  }
+}

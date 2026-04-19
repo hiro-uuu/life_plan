@@ -1,0 +1,28 @@
+:root {
+  --bg: #0f1419;
+  --panel: #161d26;
+  --panel-elev: #1e2733;
+  --border: #2a3440;
+  --border-strong: #3a4654;
+  --text: #e6edf3;
+  --text-muted: #9ba6b3;
+  --text-dim: #6b7685;
+  --accent: #5eb0ff;
+  --accent-dim: #2d6fb5;
+  --success: #7dd87d;
+  --warning: #f0c674;
+  --danger: #f28b82;
+  --chart-cash: #5eb0ff;
+  --chart-invest: #7dd87d;
+  --chart-debt: #f28b82;
+  --chart-income: #7dd87d;
+  --chart-expense: #f0c674;
+
+  --radius: 6px;
+  --radius-sm: 4px;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI',
+    'Noto Sans JP', sans-serif;
+}

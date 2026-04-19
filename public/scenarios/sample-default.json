@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "id": "sample-default",
+  "name": "サンプル: 29歳・共働き・子1人",
+  "createdAt": "2026-01-01T00:00:00.000Z",
+  "updatedAt": "2026-01-01T00:00:00.000Z",
+  "initialConditions": {
+    "startYear": 2026,
+    "husbandAge": 29,
+    "wifeAge": 29,
+    "initialCashSavings": 5000000,
+    "inflationRatePercent": 1.5,
+    "endAge": 65
+  },
+  "income": {
+    "husband": {
+      "annualTakeHome": 6000000,
+      "annualRaiseAmount": 100000
+    },
+    "wife": {
+      "annualTakeHome": 3000000,
+      "maternityLeaveYears": 1
+    }
+  },
+  "expense": {
+    "categories": {
+      "fixedCosts": { "annualAmount": 1800000, "applyInflation": true },
+      "carCosts": { "annualAmount": 400000, "applyInflation": true },
+      "appliances": { "annualAmount": 150000, "applyInflation": true },
+      "food": { "annualAmount": 720000, "applyInflation": true },
+      "pocketMoney": { "annualAmount": 600000, "applyInflation": false },
+      "dailyNecessities": { "annualAmount": 240000, "applyInflation": true },
+      "misc": { "annualAmount": 200000, "applyInflation": true },
+      "events": { "annualAmount": 300000, "applyInflation": true }
+    }
+  },
+  "investment": {
+    "initialBalance": 1000000,
+    "annualContribution": 600000,
+    "annualYieldPercent": 4
+  },
+  "loans": [
+    {
+      "id": "sample-mortgage",
+      "kind": "mortgage",
+      "name": "住宅ローン",
+      "principal": 35000000,
+      "annualInterestRatePercent": 1.2,
+      "termYears": 35,
+      "startYear": 2028
+    }
+  ],
+  "children": [
+    {
+      "id": "sample-child-1",
+      "name": "第1子",
+      "birthYear": 2027,
+      "maternityPauseApplied": true,
+      "educationPlan": {
+        "daycare": "public",
+        "elementary": "public",
+        "juniorHigh": "public",
+        "highSchool": "public",
+        "university": "public"
+      },
+      "childFoodAnnual": 200000,
+      "childMiscAnnual": 100000,
+      "applyInflationToChildCosts": true
+    }
+  ]
+}
